@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -13,6 +14,34 @@ struct ListNode {
 
 class Solution {
 public:
+    struct nodeCmp {
+        bool operator()(ListNode *node1, ListNode *node2) {
+            return node1->val > node2->val;
+        }
+    };
+
+    ListNode* mergeKLists_V2(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, nodeCmp> minHeap;
+        for (ListNode *headNode : lists) {
+            if (nullptr != headNode) {
+                minHeap.push(headNode);
+            }
+        }
+
+        ListNode resListHead;
+        ListNode *resListTail = &resListHead;
+        while (!minHeap.empty()) {
+            resListTail->next = minHeap.top();
+            minHeap.pop();
+            resListTail = resListTail->next;
+            if (nullptr != resListTail->next) {
+                minHeap.push(resListTail->next);
+            }
+        }
+
+        return resListHead.next;
+    }
+    
     ListNode* mergeKLists(vector<ListNode*>& lists) { 
         int listsNum = lists.size();
         int emptyListNum = 0;
@@ -91,7 +120,7 @@ int main () {
     vector<ListNode*> lists = {&node00, &node10, &node20};
 
     Solution solu;
-    ListNode* res = solu.mergeKLists(lists);
+    ListNode* res = solu.mergeKLists_V2(lists);
 
     while (nullptr != res) {
         cout << res->val << endl;
