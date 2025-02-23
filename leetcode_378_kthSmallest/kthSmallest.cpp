@@ -24,10 +24,10 @@ public:
 
 int main () {
     Solution solu;
-    vector<vector<int>> matrix1 = {{1,5,9},{10,11,13},{12,13,15}};
+    vector<vector<int>> matrix1 = {{1,2,9},{3,6,10},{10,13,15}};
     vector<vector<int>> matrix2 = {{-5}};
     
-    cout << solu.kthSmallest(matrix1, 8) << endl;
+    cout << solu.kthSmallest(matrix1, 4) << endl;
     cout << solu.kthSmallest(matrix2, 1) << endl;
 
     return 0;
