@@ -9,6 +9,7 @@ struct numNode {
     int index;
     numNode(int num, int index) : num(num), index(index) {}
 };
+
 struct numCmp {
     bool operator () (numNode *node1, numNode *node2)
     {
