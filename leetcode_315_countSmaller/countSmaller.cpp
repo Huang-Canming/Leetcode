@@ -69,41 +69,57 @@ public:
 #else
 class Solution {
 public:
-    void mergeSort(const vector<int> &nums, vector<int> &idxs, int left, int right, vector<int> &arr, vector<int> &counts) {
-        if (left >= right) return;
-        int mid = (left + right) >> 1;
-        mergeSort(nums, idxs, left, mid, arr, counts);
-        mergeSort(nums, idxs, mid + 1, right, arr, counts);
-        int i = left, j = mid + 1, k = 0;
+    void mergeSort(vector<int> &nums, vector<int> &idx, vector<int>& tmp, int left, int right, vector<int>& res) {
+        if (left >= right) {
+            return;
+        }
+
+        int mid = (left +right) / 2;
+        mergeSort(nums, idx, tmp, left, mid, res);
+        mergeSort(nums, idx, tmp, mid + 1, right, res);
+        
+        for (int k = left; k <= right; k++) {
+            tmp[k] = idx[k];
+        }
+
+        // 降序排序
+        int i = left, j = mid + 1, fillPos = left;
         while (i <= mid && j <= right) {
-            if (nums[idxs[i]] > nums[idxs[j]]) {
-                counts[idxs[i]] += right - j + 1;
-                arr[k++] = idxs[i++];
+            if (nums[tmp[i]] > nums[tmp[j]]) {
+                // 先计数，再给 idx 赋值，赋值过程中 i 会变化
+                res[tmp[i]] += right - j + 1;
+                idx[fillPos++] = tmp[i++];
+            } else {
+                idx[fillPos++] = tmp[j++];
             }
-            else arr[k++] = idxs[j++];
         }
-        while (i <= mid) {
-            arr[k++] = idxs[i++];
+
+        if (i > mid) {
+            while (j <= right) {
+                idx[fillPos++] = tmp[j++];
+            }
         }
-        while (j <= right) {
-            arr[k++] = idxs[j++];
+
+        if (j > right) {
+            while (i <= mid) {
+                idx[fillPos++] = tmp[i++];
+            }
         }
-        for (int p = 0; p < k; ++p) {
-            idxs[left + p] = arr[p];
-        }
+        
         return;
     }
 
     vector<int> countSmaller(vector<int>& nums) {
-        int n = nums.size();
-        vector<int> counts(n, 0), idxs(n), arr(n);
-        for (int i = 0; i < n; ++i) {
-            idxs[i] = i;
-        }
-        mergeSort(nums, idxs, 0, n - 1, arr, counts);
-        return counts;
+        int numCnt = nums.size();
+        vector<int> res(numCnt, 0);
+        vector<int> tmp(numCnt, 0);
+        vector<int> idx(numCnt, 0);
+        iota(idx.begin(), idx.end(), 0);
+        
+        mergeSort(nums, idx, tmp, 0, numCnt - 1, res);
+        return res;
     }
-};
+}; 
 #endif
 
 int main () {
