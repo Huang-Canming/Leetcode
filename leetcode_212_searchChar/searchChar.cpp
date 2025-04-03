@@ -8,93 +8,93 @@ using namespace std;
 
 #if 1
 class Solution {
-    private:
-        int dirs[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-    
-        struct TrieNode {
-            string word;
-            unordered_map<char, TrieNode*> subTrieNode;
-            TrieNode() : word("") {}
-        };
-        
-        void buildTrieTree (vector<string>& words, TrieNode *root) {
-            TrieNode *curNode = nullptr;
-            
-            // 根据 words 构建字典树
-            for (string w : words) {
-                curNode = root;
-                for (char c : w) {
-                    // 逐个处理 w 中的字符，一个字符对应字典树中的一层（一个节点）
-                    if (0 == curNode->subTrieNode.count(c)) {
-                        // 对应的子节点不存在，就新建一个子节点
-                        curNode->subTrieNode[c] = new TrieNode();
-                    }
-                    curNode = curNode->subTrieNode[c];
-                }
-                curNode->word = w;
-            }
-            
-            return;
-        }
-        
-        void dfsWord (vector<vector<char>> &board, int i, int j, TrieNode *curNode, set<string> &resSet) {
-            if (curNode->word.size() > 0) {
-                // 找到了在 words 中的一个字符串，这里不 return，继续向下搜索
-                resSet.insert(curNode->word);
-            }
-        
-            int nextI = 0, nextJ = 0;
-            char nextC, curC;
-            for (int k = 0; k < 4; k++) {
-                nextI = i + dirs[k][0];
-                nextJ = j + dirs[k][1];
-                if (nextI < 0 || nextI >= board.size() || nextJ < 0 || nextJ >= board[0].size()) {
-                    // 超出边界，搜索方向不对，直接跳过
-                    continue;
-                }
+private:
+    int dirs[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
-                nextC= board[nextI][nextJ];
-                if ('#' == nextC) {
-                    // 已经搜索过，跳过
-                    continue;
-                }
-                
-                if (0 != curNode->subTrieNode.count(nextC)) {
-                    // 字符在当前路径上存在，搜索方向是对的，继续向下搜索
-                    curC = board[i][j];
-                    board[i][j] = '#';
-                    dfsWord(board, nextI, nextJ, curNode->subTrieNode[nextC], resSet);
-                    board[i][j] = curC;
-                }
-            }
-            
-            return;
-        }
-    
-    public:
-        vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
-            TrieNode root;              // 字典树根节点，不对应任何字符，word 必为空
-            set<string> resSet;
-            int m = board.size(), n = board[0].size();
-            char c;
-
-            buildTrieTree(words, &root);
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    c = board[i][j];
-                    if (0 != root.subTrieNode.count(c)) {
-                        dfsWord(board, i, j, root.subTrieNode[c], resSet);
-                    }
-                }
-            }
-            
-            vector<string> resVec;
-            for (string word : resSet) {
-                resVec.push_back(word);
-            }
-            return resVec;
-        }
+    struct TrieNode {
+        string word;
+        unordered_map<char, TrieNode*> subTrieNode;
+        TrieNode() : word("") {}
     };
+    
+    void buildTrieTree (vector<string>& words, TrieNode *root) {
+        TrieNode *curNode = nullptr;
+        
+        // 根据 words 构建字典树
+        for (string w : words) {
+            curNode = root;
+            for (char c : w) {
+                // 逐个处理 w 中的字符，一个字符对应字典树中的一层（一个节点）
+                if (0 == curNode->subTrieNode.count(c)) {
+                    // 对应的子节点不存在，就新建一个子节点
+                    curNode->subTrieNode[c] = new TrieNode();
+                }
+                curNode = curNode->subTrieNode[c];
+            }
+            curNode->word = w;
+        }
+        
+        return;
+    }
+    
+    void dfsWord (vector<vector<char>> &board, int i, int j, TrieNode *curNode, set<string> &resSet) {
+        if (curNode->word.size() > 0) {
+            // 找到了在 words 中的一个字符串，这里不 return，继续向下搜索
+            resSet.insert(curNode->word);
+        }
+    
+        int nextI = 0, nextJ = 0;
+        char nextC, curC;
+        for (int k = 0; k < 4; k++) {
+            nextI = i + dirs[k][0];
+            nextJ = j + dirs[k][1];
+            if (nextI < 0 || nextI >= board.size() || nextJ < 0 || nextJ >= board[0].size()) {
+                // 超出边界，搜索方向不对，直接跳过
+                continue;
+            }
+
+            nextC= board[nextI][nextJ];
+            if ('#' == nextC) {
+                // 已经搜索过，跳过
+                continue;
+            }
+            
+            if (0 != curNode->subTrieNode.count(nextC)) {
+                // 字符在当前路径上存在，搜索方向是对的，继续向下搜索
+                curC = board[i][j];
+                board[i][j] = '#';
+                dfsWord(board, nextI, nextJ, curNode->subTrieNode[nextC], resSet);
+                board[i][j] = curC;
+            }
+        }
+        
+        return;
+    }
+
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        TrieNode root;              // 字典树根节点，不对应任何字符，word 必为空
+        set<string> resSet;
+        int m = board.size(), n = board[0].size();
+        char c;
+
+        buildTrieTree(words, &root);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                c = board[i][j];
+                if (0 != root.subTrieNode.count(c)) {
+                    dfsWord(board, i, j, root.subTrieNode[c], resSet);
+                }
+            }
+        }
+        
+        vector<string> resVec;
+        for (string word : resSet) {
+            resVec.push_back(word);
+        }
+        return resVec;
+    }
+};
 #else
 class Solution {
 private:
