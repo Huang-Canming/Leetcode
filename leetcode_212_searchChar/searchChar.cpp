@@ -48,7 +48,7 @@ class Solution {
             for (int k = 0; k < 4; k++) {
                 nextI = i + dirs[k][0];
                 nextJ = j + dirs[k][1];
-                if (nextI >= board.size() || nextJ >= board[0].size()) {
+                if (nextI < 0 || nextI >= board.size() || nextJ < 0 || nextJ >= board[0].size()) {
                     // 超出边界，搜索方向不对，直接跳过
                     continue;
                 }
