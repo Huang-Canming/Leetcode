@@ -9,6 +9,39 @@ struct TreeNode {
 
 class Solution {
 public:
+    #if 1
+    TreeNode* flattenRecursive (TreeNode* node) {
+        if (nullptr == node) {
+            return nullptr;
+        }
+        TreeNode* tail = node;
+        TreeNode* leftTail = nullptr;
+        TreeNode* rightTail = nullptr;
+
+        // 左子树非空
+        if (nullptr != node->left) {
+            leftTail = flattenRecursive(node->left);
+            leftTail->right = node->right;
+            node->right = node->left;
+            node->left = nullptr;
+            // node->right 已被修改，实际原右子树的根节点是 leftTail->right
+            if (nullptr != leftTail->right) {
+                // 右子树非空
+                rightTail = flattenRecursive(leftTail->right);
+                tail = rightTail;
+            } else {
+                // 右子树为空
+                tail = leftTail;
+            }
+        } else if (nullptr != node->right) {
+            // 左子树为空，右子树非空
+            rightTail = flattenRecursive(node->right);
+            tail = rightTail;
+        }
+
+        return tail;
+    }
+    #else
     TreeNode* flattenRecursive (TreeNode* node) {
         if (nullptr == node) {
             return nullptr;
@@ -34,6 +67,7 @@ public:
             return node;
         }
     }
+    #endif
 
     void flatten(TreeNode* root) {
         (void) flattenRecursive(root);
