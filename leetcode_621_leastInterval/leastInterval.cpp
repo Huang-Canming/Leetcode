@@ -1,23 +1,29 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
 class Solution {
 public:
     int leastInterval(vector<char>& tasks, int n) {
-        int len = tasks.size();
-        vector<int> vec(26);
-        for(char c : tasks) {
-            vec[c - 'A']++;
+        unordered_map<char, int> hash;
+        for (char ch: tasks){
+            hash[ch]++;
         }
-        sort(vec.begin(),vec.end(),[](int &x,int &y) {return x > y;});
-        int cnt = 1;
-        while(cnt < vec.size() && vec[cnt] == vec[0]) {
-            cnt++;
+        int m = 0, x = 0;
+        for (auto pair: hash){
+            if (m < pair.second){
+                m = pair.second;
+                x = 1;
+            }
+            else if (pair.second == m){
+                x++;
+            }
         }
-        return max(len, cnt + (n + 1) * (vec[0] - 1));
+        int num1 = tasks.size();
+        int num2 = (m-1)*(n+1)+x;
+        return max(num1, num2);
     }
 };
 
@@ -28,3 +34,4 @@ int main () {
     cout << sol.leastInterval(vec, 2) << endl;
     return 0;
 }
+
